@@ -1,0 +1,126 @@
+\documentclass[12pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fullpage}
+\usepackage{microtype}
+\usepackage{natbib}
+\usepackage{url}
+
+\newtheorem{mydef}{Definition}
+
+\title{CPSC 4625 - Amortized Analysis}
+\author{A. Coles, C. Rabl}
+\date{}
+\begin{document}
+\maketitle
+
+\section*{Abstract}
+\emph{Amortized analysis is a useful concept in terms of algorithmic analysis. It allows computer scientists to analyze complex algorithms and intricate data structures in a very simple, concise manner, representing the costs of their operations using an economic model. Rather than relying on probabilistic reasoning, algorithmic cost models are analyzed in terms of individual operations on both micro- and macro-scales. In this paper, we explore the methods and applications of amortized analysis, and present concrete solutions to selected examples.}
+
+\section*{Introduction}
+% discuss what time complexity is in terms of analyzing an algorithm and what the usual approaches are in analyzing time complexity. You may come up with one or two examples to show the concepts and terms. We have discussed these in our class. But now you need to write them in your own language. 
+
+When designing algorithms or analyzing existing solutions, it is useful to have some measure of \emph{time complexity} or cost in order to determine whether a particular algorithm constitutes an efficient solution to a problem. Using time complexity, it is possible to compare and contrast algorithms as well as classify them according to the difficulty of the problem that they solve. Complexity theory has long been an important topic in computer science, and has produced many interesting and deep results (\cite{Karp72}, \cite{Savitch70}).
+
+\paragraph{$\mathcal{O}$-notation} Introduced to computer science by \cite{Knuth76}, $\mathcal{O}$-notation describes the asymptotic behavior of functions. When analyzing algorithms, it is useful to have some notion of ``how long'' an algorithm might take to complete, given the size of its input. A function $f$ has the property $f \in \mathcal{O}(g)$ (where $g$ is a function) if there exists a constant $c \in \mathbb{R}^{+}$ and $n_{0} \in \mathbb{N}$ such that for all integers $n \geq n_{0}$, the following inequality holds:
+\begin{align}
+f(n) &\leq c*g(n)
+\end{align}
+
+
+\section{Aggregate Analysis}
+
+
+\section{Accounting Method}
+
+
+\section{Potential Method}
+Using the \emph{potential method}, we define a potential function $\Phi(D)$ where $D$ is the \emph{configuration} of an arbitrary data structure. This function maps any configuration of the data structure $D$ to a real number, representing the ``potential'' of the data structure's configuration at a given point in time. The amortized time $\hat{T}$ of an operation is $\hat{T} = T+\Phi(D_{after})-\Phi(D_{before})$ where $T$ is the actual running time of the operation. $D_{before}$ and $D_{after}$ are the configurations of the data structure before and after the operation is performed, respectively. \\
+
+Given a sequence of $n$ operations on a data structure, we derive the following equality from the formula above:
+\begin{align}
+\sum_{i=1}^{n} T_i &= \sum_{i=1}^{n} \hat{T}_i + \Phi(D_{i-1}) - \Phi(D_{i})
+\end{align}
+
+We denote the ``previous'' and ``current'' configurations of the data structure D by $D_{i-1}$ and $D_{i}$, respectively. In the case where $i=1$, $D_0$ is defined to be the initial state of the data structure before any operations are performed on it. By expanding the series, we note that the sum can be written as:
+\begin{align}
+\sum_{i=1}^{n} T_i &= \sum_{i=1}^{n} \hat{T}_i + \Phi(D_{i-1}) - \Phi(D_{i}) \\
+&= \sum_{i=1}^{n} \hat{T}_i + \sum_{i=1}^{n} \Phi(D_{i-1}) - \Phi(D_{i}) \\
+&= \left( \sum_{i=1}^{n} \hat{T}_i \right) + \Phi(D_0) - \Phi(D_1) + \Phi(D_1) - ... - \Phi(D_{n-1}) + \Phi(D_{n-1}) - \Phi(D_n) \\
+&= \Phi(D_0) - \Phi(D_n) + \sum_{i=1}^{n} \hat{T}_i
+\end{align}
+
+Writing this equation in terms of the actual running time of the operations, we can conclude that the total amortized running time for a series of $n$ operations is:
+\begin{align}
+\sum_{i=1}^{n} \hat{T}_{i} &= \Phi(D_n) - \Phi(D_0) + \sum_{i=1}^{n} T_{i}
+\end{align}
+
+According to \cite{Tarjan85}, the potential and accounting methods are interchangeable. 
+
+
+\section{Dynamic Tables}
+Applications such as simple databases may store their data using tabular data structures. Therefore, we wish to minimize the amount of time required for certain operations, such as insertion and deletion, since these operations will comprise the vast majority of the operations which will be performed on the data structure. An additional constraint we specify is that we should be able to add an arbitrary number of elements to the table. This is a difficult problem to tackle, since table row sizes may differ, and we must allocate enough space for the table to be stored (minimizing over-allocated space). \\
+
+In order to satisfy these constraints, we make use of \emph{dynamic tables} which support these operations. Initially, empty tables are allocated a size of 1. Once the number of filled rows in the table is equal to its size, we allocate twice the size of the previous table size, and proceed in this way until we stop adding rows to the table, or run out of memory. When deleting elements, we may wish to contract the table so that unused memory can be released. \\
+
+
+
+\section*{Conclusion}
+% discuss what you have learned by doing this project, what are the types of future problems that can be analyzed using this kind of analysis, etc. Discuss anything you think that might be helpful in appreciating your efforts in this project.
+
+
+\section*{Problem Solving}
+
+\paragraph{Accounting Method} We have three types of operations on stack: {\verb PUSH }, {\verb POP }, and {\verb COPY } (every $k^{th}$ operation, we copy the whole stack for backup purposes). Use the accounting method to show that the cost of n stack operations ({\verb PUSH }, {\verb POP }, and {\verb COPY }) is $\mathcal{O}(n)$: \\
+
+To show that $n$ stack operations takes $\mathcal{O}(n)$ time using the
+accounting method we assign costs to each operation as such:
+\begin{enumerate}
+\item Cost of 2 for {\verb PUSH }
+\item Cost of 0 for {\verb POP }
+\item Cost of 0 for {\verb COPY }
+\end{enumerate}
+
+Whenever we do a {\verb PUSH } operation, we use a point for it, which yields a net credit of 1 per stack element as we assigned a cost of 2 to {\verb PUSH } (which, in reality has a cost of 1). This will leave a stack whose elements each have a credit of 1, which will be used to pay for {\verb POP } operations. Since {\verb POP } has a real cost of 1 (although we assigned it a cost of 0) and the element that is being popped has 1 credit on it, the net cost of $n$ {\verb POP } operations is 0. \\
+
+The {\verb COPY } operation is a series of {\verb PUSH } and {\verb POP } operations, which we have already shown to balance to 0 (in the previous paragraph) no matter which order they are done. Additionally, we cannot go into debt because the operations we are using never work on a stack that {\verb PUSH } has not built (since we have no other functions to build a stack). Therefore, the {\verb COPY } and {\verb POP } operations will always work on a stack whose elements all have a credit of 1. The cost of a stack is always 1 per element, for n elements. This means the cost for $n$ operations is $n$, giving us worst case cost of $\mathcal{O}(n)$ with an amortized cost of $\mathcal{O}(1)$.
+
+
+\paragraph{Aggregate Analysis} We have a special data structure. The $i^{th}$ operation has a cost of $i$, if $i$ is an exact power of 2 or 3 and has a cost of 1 otherwise. For the $i^{th}$ elements that are powers of 3 we have a contributing cost of:
+\begin{align}
+C_{cubes} &= \sum_{i=1}^{n} \frac{3^i}{3^n}
+\end{align}
+
+Which has a maximum contributing cost of:
+\begin{align}
+M_{cubes} &= \lim_{n \to \infty} \sum_{i=1}^{n} \frac{3^i}{3^n} = \frac{3}{2}
+\end{align}
+
+For $i^{th}$ elements that are powers of 2 we have a contributing cost of:
+\begin{align} 
+C_{squares} &= \sum_{i=1}^{n} \frac{2^i}{2^n}
+\end{align}
+
+Which has a maximum contributing cost of:
+\begin{align}
+M_{squares} &= \lim_{n \to \infty} \sum_{i=1}^{n} \frac{2^i}{2^n} = 2
+\end{align}
+
+The remaining elements we have a contributing cost of:
+\begin{align}
+C_{rest} &= \frac{n - \lfloor \log_{2}(n) \rfloor + \lfloor \log_{3}(n) \rfloor + 2}{n} 
+\end{align}
+
+Which has a maximum contributing cost of:
+\begin{align}
+M_{rest} &= \lim_{n \to \infty} \frac{n - \lfloor log_{2}(n) \rfloor + \lfloor log_{3}(n) \rfloor + 2}{n} = 1
+\end{align} 
+
+This means for $n$ elements we have a cost ceiling of 4.5 per element. This gives us $T(n) = 4.5*n$. $\frac{T(n)}{n}$ gives us $\mathcal{O}(1)$ amortized running time per operation.
+
+\bibliographystyle{plainnat}
+\bibliography{bibliography}
+
+\end{document}
