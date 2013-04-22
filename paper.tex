@@ -29,12 +29,48 @@ When designing algorithms or analyzing existing solutions, it is useful to have 
 f(n) &\leq c*g(n)
 \end{align}
 
+A naive implementation of an array search algorithm (specified in the pseudocode below) takes $\mathcal{O}(n)$ time, where $n$ is the size of the array.
+
+\begin{verbatim}
+Find(array, value)
+   for item in array
+      if entry == value
+         return True
+      end
+   end
+   return False
+end
+\end{verbatim}
+
+Running through the code, it is clear that the algorithm will, in the worst case, look through every element in the array before returning {\verb TRUE }. Additionally, it would never be the case that the algorithm takes longer than $T(n)$ time, since its running time is bounded by the size of its input.
 
 \section{Aggregate Analysis}
+The goal of aggregate analysis is to show that for all sequences of $n$ operations the worst-case time is $T(n)$ in total.  The amortized cost of $n$ operations in the worst case is $T(n)/n$ which is subsequently assigned to each operation no matter what it is. \\
 
+Using bubble sort as an example we obtain the following pseudocode:
+
+\begin{verbatim}
+BubbleSort(list)
+   sorted = true
+   do
+      for each element n-th in list starting at 2nd element
+         if(list[n-1] > list[n])
+            swap list[n-1] and list[n]
+            sorted = false
+         end
+      end
+   while sorted == false
+end
+\end{verbatim}
+
+From this example, we see that the fastest case is $\mathcal{O}(n)$ for n elements as the entire array must be scanned.  If the array is initially sorted in reverse order, we see it will take $n$ passes to get the first element to the $n$-th place because we only swap it one position with each loop iteration. Thus, we must scan an $n$-element array $n$ times, giving a worst case of time complexity of $\mathcal{O}(n^2)$.  Using aggregate analysis, we see that the swap and scan operations each take $\mathcal{O}(n)$ amortized time, from $T(n^2)/n$.
 
 \section{Accounting Method}
+The accounting method extends aggregate analysis by adding the concept of ``credit'' in order to cover the cost of future operations. Rather than assigning the same amortized cost to all operations, we different amortized costs based on the actual running time of the operations. In cases where the actual running time $T(n)$ of an operation is less than the amortized cost of the operation $\hat{T}(n)$, we assign the difference $T(n)-\hat{T}(n)$ to other operations as ``credit''. In this way, if we initially perform many operations with small actual costs (but higher amortized costs), we may perform operations with larger actual costs (but the same amortized cost) later on. \\
 
+The goal of the accounting method, as with aggregate analysis, is to show that the running time of a large sequence of operations is small even if a single operation within the sequence has a long running time. Each operation is charged an amortized cost which is consumed when the operation is performed (where one cost unit is equal to one time unit). Any amount that is not immediately consumed (for instance, if an operation with an amortized cost of 2 uses only 1 time unit) is placed in a \emph{bank} which may be consumed by subsequent operations. \\
+
+An important detail of the accounting method is that although we may assign amortized costs of 0 to some operations, we must take care to make sure the bank balance is always non-negative. This is done in order to ensure that operations can never be indebted to one another (and therefore some operations must be performed before others). An interesting side-effect of this property is that the sum of the amortized costs is an upper bound on the actual cost of the operations.
 
 \section{Potential Method}
 Using the \emph{potential method}, we define a potential function $\Phi(D)$ where $D$ is the \emph{configuration} of an arbitrary data structure. This function maps any configuration of the data structure $D$ to a real number, representing the ``potential'' of the data structure's configuration at a given point in time. The amortized time $\hat{T}$ of an operation is $\hat{T} = T+\Phi(D_{after})-\Phi(D_{before})$ where $T$ is the actual running time of the operation. $D_{before}$ and $D_{after}$ are the configurations of the data structure before and after the operation is performed, respectively. \\
